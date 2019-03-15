@@ -5,7 +5,7 @@ import Cards from "./cards"
 
 export default class Selector extends Component {
   state = {
-    stateDistrictMap: {},//{"UP":["Prayagraj", "Moradabad"], "Punjab":["Chandigarh", "Jalandhar"], "selectState":[]},
+    stateDistrictMap: {"UP":["Prayagraj", "Moradabad"], "Punjab":["Chandigarh", "Jalandhar"], "selectState":[]},
     districtRender: [],
     value: "selectState",
     valueDistrict: "Select District",
@@ -13,6 +13,8 @@ export default class Selector extends Component {
     cardsData: {},
     collapse : new Array(100).fill(false)
   };
+  // Uncomment this when using on local
+  /*
   componentDidMount(e){
     const that = this;
     console.log("Hi")
@@ -21,8 +23,8 @@ export default class Selector extends Component {
       { let va = {"selectState":[]};
         this.setState({stateDistrictMap:{...data, ...va}});
       }); // this works
-
   }
+  */
   handleCollapsible = (e, ind) =>   {
     var newState = this.state.collapse;
     newState[ind] = !newState[ind];
