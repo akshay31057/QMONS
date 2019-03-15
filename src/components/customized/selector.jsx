@@ -1,9 +1,11 @@
 import React, { Component } from "react";
+import axios from "axios";
 import DistrictRenderer from "./districtRenderer"
 import Cards from "./cards"
+
 export default class Selector extends Component {
   state = {
-    stateDistrictMap: {"UP":["Prayagraj", "Moradabad"], "Punjab":["Chandigarh", "Jalandhar"], "selectState":[]},
+    stateDistrictMap: {},//{"UP":["Prayagraj", "Moradabad"], "Punjab":["Chandigarh", "Jalandhar"], "selectState":[]},
     districtRender: [],
     value: "selectState",
     valueDistrict: "Select District",
@@ -11,7 +13,16 @@ export default class Selector extends Component {
     cardsData: {},
     collapse : new Array(100).fill(false)
   };
+  componentDidMount(e){
+    const that = this;
+    console.log("Hi")
+    const jsonPromise = fetch("http://localhost:5000/centres").then(response => response.json());
+    jsonPromise.then((data) =>
+      { let va = {"selectState":[]};
+        this.setState({stateDistrictMap:{...data, ...va}});
+      }); // this works
 
+  }
   handleCollapsible = (e, ind) =>   {
     var newState = this.state.collapse;
     newState[ind] = !newState[ind];
@@ -21,7 +32,9 @@ export default class Selector extends Component {
   handleStateChange=(e)=>{
     if(e.target.value !== "selectState"){
     this.setState({districtRender:this.state.stateDistrictMap[e.target.value],
-                  value: e.target.value})
+                  value: e.target.value,
+                valueDistrict:"Select District",
+              showCards:false})
     }
     else{
       this.setState({districtRender:this.state.stateDistrictMap[e.target.value],
@@ -41,6 +54,11 @@ export default class Selector extends Component {
   }
 
   render() {
+    const states = Object.keys(this.state.stateDistrictMap);
+    const options = states.map( (state) =>
+    <option value={state}>{state}</option>
+  );
+
     return (
           <div>
             <div>
@@ -51,9 +69,7 @@ export default class Selector extends Component {
                 <label>
                   Pick your favorite flavor:
                   <select value= {this.state.value} onChange={this.handleStateChange}>
-                      <option value="UP">UP</option>
-                      <option value="Punjab">Punjab</option>
-                      <option value="selectState" selected>Select your state</option>
+                    {options}
                   </select>
                 </label>
                 <DistrictRenderer districts={this.state.districtRender.concat(["Select District"])} onDistrictClick={this.handleDistrictClick} value={this.state.valueDistrict} />
