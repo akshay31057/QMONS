@@ -8,8 +8,8 @@ class Main extends Component {
     return (
       <main className="container">
         <VidlyNavbar />
-        <br /> <br />
-        <Selector />
+        <br/> <br/>
+        <Selector/>
       </main>
     );
   }
