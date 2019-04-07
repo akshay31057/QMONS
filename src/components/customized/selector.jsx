@@ -5,7 +5,7 @@ import Cards from "./cards"
 
 export default class Selector extends Component {
   state = {
-    stateDistrictMap: {"UP":["Prayagraj", "Moradabad"], "Punjab":["Chandigarh", "Jalandhar"], "selectState":[]},
+    stateDistrictMap:{},// {"UP":["Prayagraj", "Moradabad"], "Punjab":["Chandigarh", "Jalandhar"], "selectState":[]},
     districtRender: [],
     value: "selectState",
     valueDistrict: "Select District",
@@ -14,7 +14,7 @@ export default class Selector extends Component {
     collapse : new Array(100).fill(false)
   };
   // Uncomment this when using on local
-  /*
+
   componentDidMount(e){
     const that = this;
     console.log("Hi")
@@ -24,7 +24,7 @@ export default class Selector extends Component {
         this.setState({stateDistrictMap:{...data, ...va}});
       }); // this works
   }
-  */
+
   handleCollapsible = (e, ind) =>   {
     var newState = this.state.collapse;
     newState[ind] = !newState[ind];
@@ -48,10 +48,25 @@ export default class Selector extends Component {
 
   }
   handleDistrictClick=(e) => {
+      const data = {
+        "state":this.state.value,
+        "district":e.target.value
+      };
+      const params = {
+        body: data,
+        method: "GET"
+      };
 
-      this.setState({valueDistrict:e.target.value,
-                    showCards: e.target.value !== "Select District" ? true: false,
-                  cardsData: {"Railway Station":[1,2,3,4],"Bus Stand @ 1":[1,2,31],"RW @2":[1,31,1]}});
+      const jsonPromise = fetch("http://localhost:5000/centre_data?state="+data["state"].replace(" ","+")+"&district="+data["district"].replace(" ","+")).then(response => response.json());
+      jsonPromise.then((dat) =>
+        {//console.log(dat);
+          this.setState({valueDistrict:data["district"],
+                        showCards: data["district"] !== "Select District" ? true: false,
+                      cardsData: dat});
+        }); // this works
+      // this.setState({valueDistrict:e.target.value,
+      //               showCards: e.target.value !== "Select District" ? true: false,
+      //             cardsData: {"Railway Station":[1,2,3,4],"Bus Stand @ 1":[1,2,31],"RW @2":[1,31,1]}});
 
   }
 
@@ -69,7 +84,7 @@ export default class Selector extends Component {
             <div>
               <form>
                 <label>
-                  Pick your favorite flavor:
+                  Pick your favorite state:
                   <select value= {this.state.value} onChange={this.handleStateChange}>
                     {options}
                   </select>
