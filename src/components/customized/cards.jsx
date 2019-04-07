@@ -8,10 +8,12 @@ export default class Cards extends Component {
     const data = this.props.data;
     var keys = []
     var values = []
+    //console.log(data);
     var collapse = this.props.collapse;
     for (var key in data){
-      keys.push(key);
-      values.push(data[key])
+      keys.push(data[key]["location"]);
+      values.push(data[key]["timestamp"]);
+      console.log(data[key]);
     }
     const cards = keys.map((card,ind) =>
     <div>
