@@ -18,7 +18,7 @@ export default class Cards extends Component {
 
   render() {
     const data = this.props.data;
-    var keys = []
+    var keys = new Set()
     var values = []
     var timeWise = [["Time", "Crowd"]]
     var timeCount = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
@@ -46,14 +46,14 @@ export default class Cards extends Component {
         timeCount[hour] += data[key]["persons"];
       //}
       dayCount[day] += data[key]["persons"]
-      keys.push(data[key]["location"]);
+      keys.add(data[key]["location"]);
       values.push(data[key]["timestamp"]);
       if(!(data[key]["location"] in location_site_map))
         location_site_map[data[key]["location"]] = new Set();
       location_site_map[data[key]["location"]].add(data[key]["site"]);
     //  console.log(data[key]);
     }
-
+    keys = Array.from(keys);
 
     console.log(location_site_map);
 
@@ -86,7 +86,8 @@ export default class Cards extends Component {
          <a href="#" className="card-link">Card link</a>
          <a href="#" className="card-link">Another link</a>
        </div>
-       {this.props.collapseInnerCards[ this.props.index][ir][ind] &&               <div className="card-deck">
+       <Collapse isOpen={this.props.collapseInnerCards[ this.props.index][ir][ind]} className="card card-body border-secondary">
+       <div className="card-deck">
 
                      <div className="row">
                         <div className="col-6 d-flex align-items-center justify-content-end">
@@ -199,7 +200,7 @@ export default class Cards extends Component {
                          </div>
                        </div>
                      </div>
-}
+</Collapse>
 
      </div>
       );
