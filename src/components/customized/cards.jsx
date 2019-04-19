@@ -18,6 +18,7 @@ export default class Cards extends Component {
 
   render() {
     const data = this.props.data;
+    console.log(data);
     var keys = new Set()
     var values = []
     var timeWise = [["Time", "Crowd"]]
@@ -55,12 +56,15 @@ export default class Cards extends Component {
     }
     keys = Array.from(keys);
 
-    console.log(location_site_map);
+    //console.log(location_site_map);
 
 
     for (var i=0;i<7;i++){
       dayWise.push([weekDays[i],dayCount[i]]);
     }
+    // for(var i=0;i<9;i++){
+    //   timeWise.push([("0"+i*100+""),timeCount[i]])
+    // }
     for(var i=0;i<24;i++){
       timeWise.push([(i*100+""),timeCount[i]])
     }
@@ -73,6 +77,7 @@ export default class Cards extends Component {
       //console.log(location_site_array);
       //console.log(i);
       const temp_cards = location_site_array.map((site,ind) =>
+
         <div className="card" onClick={(e) => {
           //var newState = this.state.innerShow;
           //newState[ir] = true;
@@ -80,126 +85,116 @@ export default class Cards extends Component {
           this.props.onInnerCollapsible(e, this.props.index, ir, ind);
           this.forceUpdate();
         }}>
-       <div className="card-body">
-         <h4 className="card-title">{site}</h4>
-         <p className="card-text">Some example text. Some example text.</p>
-         <a href="#" className="card-link">Card link</a>
-         <a href="#" className="card-link">Another link</a>
+
+       <div className="card-header bg-white">
+        <div className="row">
+         <div className="col-7">
+          {site}
+         </div>
+           <div className="col-3 text-right justify-content-center my-auto">
+             <p className="my-auto">Waiting Time</p>
+           </div>
+           <div className="col-2 bg-success my-auto" style={{'border-radius':'25px'}}>
+             <p className="text-white text-center my-auto">"Insert_Time_here"</p>
+           </div>
+         </div>
        </div>
-       <Collapse isOpen={this.props.collapseInnerCards[ this.props.index][ir][ind]} className="card card-body border-secondary">
-       <div className="card-deck">
+       <Collapse isOpen={this.props.collapseInnerCards[ this.props.index][ir][ind]} className="card-body border-secondary">
 
-                     <div className="row">
-                        <div className="col-6 d-flex align-items-center justify-content-end">
-                          <h3>GO to Queue #</h3>
-                        </div>
-                        <div className="col-6">
-                          <div className="card card-body bg-success">
-                            <h3 className="text-white text-center">6</h3>
-                          </div>
-                        </div>
-                      </div>
+       <div className="container">
 
-                      {/* Popular Days  */}
-                       <div className="col-sm-12 col-md-6">
-                         <div className="card mb-4">
-                           <div className="card-body">
-                           <Chart
-                             width='100%'
-                             height='300px'
-                             chartType="Bar"
-                             loader={<div>Loading Weekly Trends</div>}
+          {/* Popular Days  */}
+          <div className="row">
+            <div className="col-sm-12 col-md-6">
+              <div className="card mb-4 shadow-lg border-dark">
+                <div className="card-body">
+                  <Chart
+                    width='100%'
+                    height='300px'
+                    chartType="Bar"
+                    loader={<div>Loading Weekly Trends</div>}
 
-                             // JUST POPULATE THE DATA as per the database
-
-                             data={dayWise}
-
-                             options={{
-                               // Material design options
-                                 chart:
-                                 {
-                                   title: 'Popular Days',
-                                   subtitle: 'The graphs shows which days are the most busy',
-                                 },
-                             }}
-                             // For tests
-                             rootProps={{ 'data-testid': '2' }}
-                           />
-                         </div>
-                         </div>
-                       </div>
+                    // JUST POPULATE THE DATA as per the database
+                    data={dayWise}
+                    options={{
+                     // Material design options
+                       chart:
+                       {
+                         title: 'Popular Days',
+                         subtitle: 'The graphs shows which days are the most busy',
+                       },
+                    }}
+                    // For tests
+                    rootProps={{ 'data-testid': '2' }}
+                  />
+                </div>
+              </div>
+            </div>
 
 
-                       {/* Popular Times Today */}
-                       <div className="col-sm-12 col-md-6">
-                         <div className="card mb-4">
-                           <div className="card-body">
-                           <Chart
-                             width='100%'
-                             height='300px'
-                             chartType="Bar"
-                             loader={<div>Loading Today's Trends</div>}
+             {/* Popular Times Today */}
+             <div className="col-sm-12 col-md-6">
+               <div className="card mb-4 shadow-lg border-dark">
+                 <div className="card-body">
+                 <Chart
+                   width='100%'
+                   height='300px'
+                   chartType="Bar"
+                   loader={<div>Loading Today's Trends</div>}
 
 
-                             // JUST POPULATE THE DATA as per the database
+                   // JUST POPULATE THE DATA as per the database
 
-                             data={timeWise}
+                   data={timeWise}
 
-                             options={{
-                               // Material design options
-                               chart: {
-                                 title: 'Popular Times Today',
-                                 subtitle: 'The graphs shows which times are the most busy today',
-                               },
-                               colors: ['red']
-                             }}
+                   options={{
+                     // Material design options
+                     chart: {
+                       title: 'Popular Times Today',
+                       subtitle: 'The graphs shows which times are the most busy today',
+                     },
+                     colors: ['red']
+                   }}
 
-                             // For tests
-                             rootProps={{ 'data-testid': '3' }}
-                           />
-                         </div>
-                         </div>
-                       </div>
+                   // For tests
+                   rootProps={{ 'data-testid': '3' }}
+                 />
+               </div>
+               </div>
+             </div>
+          </div>
+
+           {/* Crowd Distribution over Week Days */}
+          <div className="row">
+           <div className="col-sm-12">
+             <div className="card mb-4 shadow-lg border-dark">
+               <div className="card-body">
+                <Chart
+                 width='800px'
+                 height='400px'
+                 chartType="PieChart"
+                 loader={<div>Overall Weekly Population Distribution</div>}
 
 
-                       {/* Crowd Distribution over Week Days */}
-                       <div className="col-sm-12">
-                         <div className="card mb-4">
-                           <div className="card-body">
-                            <Chart
-                             width='800px'
-                             height='400px'
-                             chartType="PieChart"
-                             loader={<div>Overall Weekly Population Distribution</div>}
+                 // JUST POPULATE THE DATA as per the database
 
+                 data={dayWise}
 
-                             // JUST POPULATE THE DATA as per the database
+                 options={{
+                   // Material design options
+                     title: 'Crowd Distribution',
+                     subtitle: 'The graph shows which days are most busy',
+                   // colors: ['red']
+                 }}
 
-                             data={[
-                               ['Day', 'Crowd'],
-                               ['Mon', 1000],
-                               ['Tue', 1170],
-                               ['Wed', 660 ],
-                               ['Thu', 1030],
-                               ['Fri', 780],
-                               ['Sat', 985],
-                               ['Sun', 500],
-                             ]}
-
-                             options={{
-                               // Material design options
-                                 title: 'Crowd Distribution',
-                                 subtitle: 'The graph shows which days are most busy',
-                               // colors: ['red']
-                             }}
-
-                             // For tests
-                               rootProps={{ 'data-testid': '3' }}
-                             />
-                           </div>
-                         </div>
-                       </div>
-                     </div>
+                 // For tests
+                   rootProps={{ 'data-testid': '3' }}
+                 />
+               </div>
+             </div>
+           </div>
+          </div>
+       </div>
 </Collapse>
 
      </div>

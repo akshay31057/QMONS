@@ -42,7 +42,7 @@ export default class Selector extends Component {
 
   handleInnerCardCollapsible = (e, index, out_ind, in_ind) => {
     var newState = this.state.collapseInnerCards;
-    console.log(index, out_ind, in_ind);
+    //console.log(index, out_ind, in_ind);
     newState[index][out_ind][in_ind] = !newState[index][out_ind][in_ind];
     this.setState({collapseInnerCards:newState});
   };
@@ -83,7 +83,7 @@ export default class Selector extends Component {
               rowLocation[dat[key]["location"]] = [];
             rowLocation[dat[key]["location"]].push(dat[key]);
           }
-          console.log(rowLocation);
+          //console.log(rowLocation);
           var finalCards = [];
           var p = 0;
           for(var key in rowLocation){
@@ -111,20 +111,23 @@ export default class Selector extends Component {
 
     return (
           <div>
-            <div>
-              {this.state.showCards && this.state.finalCards}
+            <div className="container">
+              <div className="row text-center">
+                <div className="col-12 p-4 m-4">
+                  <form>
+                    <label>
+                      Select a location:
+                      <select value= {this.state.value} onChange={this.handleStateChange}>
+                        {options}
+                      </select>
+                    </label>
+                    <DistrictRenderer districts={this.state.districtRender.concat(["Select District"])} onDistrictClick={this.handleDistrictClick} value={this.state.valueDistrict} />
+                  </form>
+                </div>
+              </div>
             </div>
             <div>
-              <form>
-                <label>
-                  Pick your favorite state:
-                  <select value= {this.state.value} onChange={this.handleStateChange}>
-                    {options}
-                  </select>
-                </label>
-                <DistrictRenderer districts={this.state.districtRender.concat(["Select District"])} onDistrictClick={this.handleDistrictClick} value={this.state.valueDistrict} />
-
-              </form>
+              {this.state.showCards && this.state.finalCards}
             </div>
           </div>
         );
