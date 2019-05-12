@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import DistrictRenderer from "./districtRenderer"
 import Cards from "./cards"
+import Frame from "./frame"
 
 export default class Selector extends Component {
   state = {
@@ -10,9 +11,13 @@ export default class Selector extends Component {
     value: "selectState",
     valueDistrict: "Select District",
     showCards: false,
+    collapseInnerCards: new Array(100).fill(false).map(() => new Array(100).fill(false).map(() => new Array(100).fill(false))),
     cardsData: {},
-    collapse : new Array(100).fill(false)
+    collapse : new Array(100).fill(false).map(() => new Array(100).fill(false)),
+    finalCards: []
+
   };
+  //onInnerCollapsible: {this.handleInnerCardCollapsible} collapseInnerCards: {this.state.collapseInnerCards}
   // Uncomment this when using on local
 
   componentDidMount(e){
@@ -25,11 +30,22 @@ export default class Selector extends Component {
       }); // this works
   }
 
-  handleCollapsible = (e, ind) =>   {
+  handleCollapsible = (e, out_ind, in_ind, da) =>   {
     var newState = this.state.collapse;
-    newState[ind] = !newState[ind];
-    this.setState({collapse:newState})
+    //console.log(out_ind, in_ind);
+    newState[out_ind][in_ind] = !newState[out_ind][in_ind];
+    //this.state.finalCards.forceUpdate();
+    //var newFinalCards =  this.state.finalCards;
+    //newFinalCards[out_ind][in_ind] = <div><Cards data={da} index={out_ind} onCollapsible= {this.handleCollapsible} collapse={this.state.collapse} onInnerCollapsible={this.handleInnerCardCollapsible} collapseInnerCards={this.state.collapseInnerCards} /> </div>;
+    this.setState({collapse:newState});
 };
+
+  handleInnerCardCollapsible = (e, index, out_ind, in_ind) => {
+    var newState = this.state.collapseInnerCards;
+    //console.log(index, out_ind, in_ind);
+    newState[index][out_ind][in_ind] = !newState[index][out_ind][in_ind];
+    this.setState({collapseInnerCards:newState});
+  };
 
   handleStateChange=(e)=>{
     if(e.target.value !== "selectState"){
@@ -60,9 +76,26 @@ export default class Selector extends Component {
       const jsonPromise = fetch("http://localhost:5000/centre_data?state="+data["state"].replace(" ","+")+"&district="+data["district"].replace(" ","+")).then(response => response.json());
       jsonPromise.then((dat) =>
         {//console.log(dat);
+          var rowLocation = {}
+          for (var key in dat){
+            const location = dat[key]['location'];
+            if(!(location in rowLocation))
+              rowLocation[dat[key]["location"]] = [];
+            rowLocation[dat[key]["location"]].push(dat[key]);
+          }
+          //console.log(rowLocation);
+          var finalCards = [];
+          var p = 0;
+          for(var key in rowLocation){
+            const ind = p;
+            p = p + 1;
+            const card = <div><Cards data={rowLocation[key]} index={ind} onCollapsible= {this.handleCollapsible} collapse={this.state.collapse} onInnerCollapsible={this.handleInnerCardCollapsible} collapseInnerCards={this.state.collapseInnerCards} /> </div>;
+            finalCards.push(card);
+          }
           this.setState({valueDistrict:data["district"],
                         showCards: data["district"] !== "Select District" ? true: false,
-                      cardsData: dat});
+                      cardsData: dat,
+                    finalCards: finalCards});
         }); // this works
       // this.setState({valueDistrict:e.target.value,
       //               showCards: e.target.value !== "Select District" ? true: false,
@@ -78,25 +111,30 @@ export default class Selector extends Component {
 
     return (
           <div>
-            <div>
-                {this.state.showCards && <Cards data={this.state.cardsData} onCollapsible= {this.handleCollapsible} collapse={this.state.collapse} />}
+            <div className="container">
+              <div className="row text-center">
+                <div className="col-12 p-4 m-4">
+                  <form>
+                    <label>
+                      Select a location:
+                      <select value= {this.state.value} onChange={this.handleStateChange}>
+                        {options}
+                      </select>
+                    </label>
+                    <DistrictRenderer districts={this.state.districtRender.concat(["Select District"])} onDistrictClick={this.handleDistrictClick} value={this.state.valueDistrict} />
+                  </form>
+                </div>
+              </div>
             </div>
             <div>
-              <form>
-                <label>
-                  Pick your favorite state:
-                  <select value= {this.state.value} onChange={this.handleStateChange}>
-                    {options}
-                  </select>
-                </label>
-                <DistrictRenderer districts={this.state.districtRender.concat(["Select District"])} onDistrictClick={this.handleDistrictClick} value={this.state.valueDistrict} />
-
-              </form>
+              {this.state.showCards && this.state.finalCards}
             </div>
           </div>
         );
           }
 }
+
+//{this.state.showCards && <Cards data={this.state.cardsData} onCollapsible= {this.handleCollapsible} collapse={this.state.collapse} onInnerCollapsible={this.handleInnerCardCollapsible} collapseInnerCards={this.state.collapseInnerCards} />}
 /*
 <div>
     {this.state.showCards && <Cards data={Object.keys(this.state.cardsData)}/>}
